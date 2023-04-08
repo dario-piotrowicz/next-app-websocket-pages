@@ -5,12 +5,6 @@ export const config = { runtime: 'experimental-edge' };
 
 export default function Home() {
 
-  const [helloStr, setHelloStr] = useState('');
-
-  useEffect(() => {
-    fetch('/api/hello').then(result => result.text()).then(setHelloStr);
-  }, []);
-
   const [socketStr, setSocketStr] = useState('');
 
   useEffect(() => {
@@ -37,8 +31,6 @@ export default function Home() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <main>
-          <h1>From hello api: {helloStr}</h1>
-          <br />
           <h1>From socket api: {socketStr}</h1>
       </main>
     </>
