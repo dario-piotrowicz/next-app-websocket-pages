@@ -26,8 +26,8 @@
     "typescript": "5.0.4"
   },
   "devDependencies": {
-    "@cloudflare/next-on-pages": "^0.7.0",
     "@cloudflare/workers-types": "^4.20230404.0",
+    "@cloudflare/next-on-pages": "^0.7.0",
     "vercel": "^28.18.4"
   }
 }
