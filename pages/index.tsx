@@ -1,9 +1,16 @@
 import Head from 'next/head'
+import { useEffect, useState } from 'react';
 
 export const config = { runtime: 'experimental-edge' };
 
-
 export default function Home() {
+
+  const [helloStr, setHelloStr] = useState('');
+
+  useEffect(() => {
+    fetch('/api/hello').then(result => result.text()).then(setHelloStr);
+  }, []);
+
   return (
     <>
       <Head>
@@ -13,7 +20,7 @@ export default function Home() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <main>
-          <h1>test</h1>
+          <h1>From hello api: {helloStr}</h1>
       </main>
     </>
   )
