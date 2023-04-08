@@ -11,33 +11,10 @@ export default function handler(request: Request) {
 
   server.accept();
 
-  (async () => {
-    setTimeout(() => {
-      console.log('sending ----------------> a');
-      server.send(' ----------------> a');
-    }, 1000);
-
-    setTimeout(() => {
-      console.log('sending ----------------> b');
-      server.send(' ----------------> b');
-    }, 2000);
-
-    setTimeout(() => {
-      console.log('sending ----------------> c');
-      server.send(' ----------------> c');
-    }, 3000);
-
-    setTimeout(() => {
-      console.log('sending ----------------> d');
-      server.send(' ----------------> d');
-    }, 4000);
-
-    setTimeout(() => {
-      console.log('sending ----------------> e');
-      server.send(' ----------------> e');
-    }, 5000);
-
-  })();
+  server.addEventListener('message', event => {
+    const message = event.data;
+    server.send(`received: ${message}`);
+  });
 
   return new Response(null, {
     status: 101,

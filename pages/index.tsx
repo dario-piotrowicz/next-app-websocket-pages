@@ -1,11 +1,17 @@
 import Head from 'next/head'
-import { useEffect, useState } from 'react';
+import { ChangeEvent, useEffect, useRef, useState } from 'react';
 
 export const config = { runtime: 'experimental-edge' };
 
 export default function Home() {
 
-  const [socketStr, setSocketStr] = useState('');
+  const websocket = useRef<WebSocket|null>(null);
+
+  const [message, setMessage] = useState<string>('');
+
+  const [socketResponses, setSocketResponses] = useState<string[]>([]);
+
+  const addSocketResponse = (response: string) => setSocketResponses(responses => [...responses, response]);
 
   useEffect(() => {
     // Note: building the URL manually since we need to use the WebSocket constructor and specify the whole wss URL,
@@ -14,12 +20,12 @@ export default function Home() {
     const base = new URL(window.location.origin).host;
     const url = `wss://${base}/api/socket`;
 
-    const websocket = new WebSocket(url);
+    websocket.current = new WebSocket(url);
 
-    const listener = (event: MessageEvent) => setSocketStr(event.data);
-    websocket.addEventListener('message', listener);
+    const listener = (event: MessageEvent) => addSocketResponse(event.data);
+    websocket.current.addEventListener('message', listener);
 
-    return () => websocket.removeEventListener('message', listener);
+    return () => websocket.current!.removeEventListener('message', listener);
   }, []);
 
   return (
@@ -31,7 +37,23 @@ export default function Home() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <main>
-          <h1>From socket api: {socketStr}</h1>
+          <label htmlFor='message-to-send'>Message to send:{' '}</label>
+          <input id="message-to-send" onChange={(event: any) => setMessage(event.target.value)} value={message}></input>
+          <button
+            disabled={!message} onClick={() => {
+            websocket.current?.send(message);
+              setMessage('');
+            }}
+          >Send</button>
+          
+          <hr />
+          
+          <p>Responses from websocket:</p>
+          <ul>
+            {
+              socketResponses.map(response => <li key={response}>{response}</li>)
+            }
+          </ul>
       </main>
     </>
   )
