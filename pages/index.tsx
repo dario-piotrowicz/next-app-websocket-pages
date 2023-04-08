@@ -11,6 +11,23 @@ export default function Home() {
     fetch('/api/hello').then(result => result.text()).then(setHelloStr);
   }, []);
 
+  const [socketStr, setSocketStr] = useState('');
+
+  useEffect(() => {
+    // Note: building the URL manually since we need to use the WebSocket constructor and specify the whole wss URL,
+    //       we should be able to just do fetch(`/api/socket`, { headers: { Upgrade: 'websocket' } }) instead but
+    //       for some reason that is not working (is Next.js stripping the Upgrade header from the request?) 
+    const base = new URL(window.location.origin).host;
+    const url = `wss://${base}/api/socket`;
+
+    const websocket = new WebSocket(url);
+
+    const listener = (event: MessageEvent) => setSocketStr(event.data);
+    websocket.addEventListener('message', listener);
+
+    return () => websocket.removeEventListener('message', listener);
+  }, []);
+
   return (
     <>
       <Head>
@@ -21,6 +38,8 @@ export default function Home() {
       </Head>
       <main>
           <h1>From hello api: {helloStr}</h1>
+          <br />
+          <h1>From socket api: {socketStr}</h1>
       </main>
     </>
   )
