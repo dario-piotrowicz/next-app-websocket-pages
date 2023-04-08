@@ -1,13 +1,14 @@
 // Next.js Edge API routes: https://nextjs.org/docs/api-routes/edge-api-routes
 
+import { Response, WebSocketPair } from '@cloudflare/workers-types';
+
 export const config = {
   runtime: "experimental-edge",
 };
 
-export default function handler(request: Request) {
-  // @ts-ignore -- Cloudflare specific class
+export default function handler() {
   const webSocketPair = new WebSocketPair();
-  const [client, server] = Object.values(webSocketPair) as [unknown, { accept: () => void } & WebSocket];
+  const [client, server] = Object.values(webSocketPair);
 
   server.accept();
 
@@ -18,8 +19,6 @@ export default function handler(request: Request) {
 
   return new Response(null, {
     status: 101,
-    // @ts-ignore
     webSocket: client,
   });
-
 }
